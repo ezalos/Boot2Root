@@ -244,11 +244,109 @@ lmezard:G!@M6f4Eatau{sF"
 
 It's a password containing the credentials to user `lmezard` for conencting to the vm.
 
-Having a look at `sshd_config` let us know we will not be able to ssh with it, let's connect to the vm directly.
+Ther was multiple open ports discovered at the 1st step, let's check for ssh and ftp :
+
+Having a look at `sshd_config` let us know we will not be able to ssh with it.
 
 ```sh
 cat /etc/ssh/sshd_config | grep AllowUsers
 AllowUsers ft_root zaz thor laurie
 ```
 
+Having a look for ftp configuration:
+```sh
+cat /etc/ftpusers
+# /etc/ftpusers: list of users disallowed FTP access. See ftpusers(5).
+root
+daemon
+bin
+sys
+sync
+games
+man
+lp
+mail
+news
+uucp
+nobody
+```
+we will be able to use ftp !
+
 ## lmezard user
+
+With the previously discovered credentials:
+
+```
+user: lmezard
+pass: G!@M6f4Eatau{sF"
+```
+
+let's connect with ftp
+
+```sh
+ftp 192.168.1.7 21
+Connected to 192.168.1.7.
+220 Welcome on this server
+Name (192.168.1.7:ezalos): lmezard
+331 Please specify the password.
+Password:
+230 Login successful.
+Remote system type is UNIX.
+Using binary mode to transfer files.
+ftp> ls
+200 PORT command successful. Consider using PASV.
+150 Here comes the directory listing.
+-rwxr-x---    1 1001     1001           96 Oct 15  2015 README
+-rwxr-x---    1 1001     1001       808960 Oct 08  2015 fun
+226 Directory send OK.
+ftp> get fun
+local: fun remote: fun
+200 PORT command successful. Consider using PASV.
+150 Opening BINARY mode data connection for fun (808960 bytes).
+226 Transfer complete.
+808960 bytes received in 0.01 secs (63.9546 MB/s)
+ftp> get README
+local: README remote: README
+200 PORT command successful. Consider using PASV.
+150 Opening BINARY mode data connection for README (96 bytes).
+226 Transfer complete.
+96 bytes received in 0.00 secs (261.1421 kB/s)
+ftp> 221 Goodbye.
+```
+
+let's have a look at the README:
+```sh
+cat README
+Complete this little challenge and use the result as password for user 'laurie' to login in ssh
+```
+
+The fun file is pretty mixed up, but with the help of python and some regex we get it back to an useable c file !
+
+```sh
+python3 ./scripts/fun.py fun > out.c && gcc out.c -o let_the_fun_begin && ./let_the_fun_begin
+MY PASSWORD IS: Iheartpwnage
+Now SHA-256 it and submit%                        
+```
+
+Following the instructions:
+
+```sh
+echo -n  Iheartpwnage | shasum -a 256
+330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4  -
+```
+
+we can now connect to ssh !
+
+## SSH laurie
+
+Connecting by ssh with the following credentials:
+```sh
+user: laurie
+pass: 330b845f32185747e4f8ca15d40ca59796035c89ea809fb5d30f4da83ecf45a4
+```
+
+we want to obtain her home directory:
+
+```sh
+scp -r laurie@192.168.1.7:~ .
+```
