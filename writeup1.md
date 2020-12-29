@@ -63,6 +63,38 @@ PORT    STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 0.17 seconds
 ```
 
+Alternative (macOS):
+
+* get the name and ip of the host by launching ```nmap``` on the subnet
+```
+➜  boot2root git:(master) nmap -sn 192.168.1.0/24
+Starting Nmap 7.91 ( https://nmap.org ) at 2020-12-29 14:02 CET
+Nmap scan report for box (192.168.1.1)
+Host is up (0.010s latency).
+Nmap scan report for MBP-de-Romain (192.168.1.21)
+Host is up (0.00033s latency).
+Nmap scan report for BornToSecHackMe (192.168.1.22)
+Host is up (0.00080s latency).
+Nmap done: 256 IP addresses (3 hosts up) scanned in 2.50 seconds
+```
+* get the open ports:
+```
+➜  boot2root git:(master) nmap BornToSecHackMe
+Starting Nmap 7.91 ( https://nmap.org ) at 2020-12-29 14:04 CET
+Nmap scan report for BornToSecHackMe (192.168.1.22)
+Host is up (0.00067s latency).
+Not shown: 994 filtered ports
+PORT    STATE SERVICE
+21/tcp  open  ftp
+22/tcp  open  ssh
+80/tcp  open  http
+143/tcp open  imap
+443/tcp open  https
+993/tcp open  imaps
+
+Nmap done: 1 IP address (1 host up) scanned in 4.73 seconds
+```
+
 ## Web Path Scanner
 
 It exist an automated tool for `web path scanner` : [Dirsearch](https://github.com/maurosoria/dirsearch)
