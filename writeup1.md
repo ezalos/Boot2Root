@@ -596,7 +596,7 @@ pass: Publicspeakingisveryeasy.126241207201b2149opekmq426135
 we see a file named turtle in the home, which we download:
 
 ```sh
-scp -r thor@192.168.1.7:~/turle .
+scp -r thor@192.168.1.7:~/turtle .
 ```
 
 We have created a script to interpret the file:
@@ -692,7 +692,6 @@ We now have all needed informations:
 root
 # id
 uid=1005(zaz) gid=1005(zaz) euid=0(root) groups=0(root),1005(zaz)
-#
 ```
 
 let's add ourselves in `/etc/sudoers`
@@ -701,7 +700,8 @@ let's add ourselves in `/etc/sudoers`
 # vim /etc/sudoers
 # sudo su
 [sudo] password for zaz:
+root@BornToSecHackMe:/home/zaz# whoami
+root
 root@BornToSecHackMe:/home/zaz# id
 uid=0(root) gid=0(root) groups=0(root)
-root@BornToSecHackMe:/home/zaz#
 ```
