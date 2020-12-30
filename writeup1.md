@@ -11,8 +11,19 @@
   * [Reading lmezard emails](#reading-lmezard-emails)
   * [Exploiting phpmyadmin](#exploiting-phpmyadmin)
   * [lmezard user](#lmezard-user)
+  * [SSH laurie](#ssh-laurie)
+    + [Phase 1](#phase-1)
+    + [Phase 2](#phase-2)
+    + [Phase 3](#phase-3)
+    + [Phase 4](#phase-4)
+    + [Phase 5](#phase-5)
+    + [Phase 6](#phase-6)
+    + [Secret phase](#secret-phase)
+    + [Finding thor ssh password](#finding-thor-ssh-password)
+  * [SSH thor](#ssh-thor)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 
 
 ## IP and Ports
@@ -350,3 +361,196 @@ we want to obtain her home directory:
 ```sh
 scp -r laurie@192.168.1.7:~ .
 ```
+There's 2 files of interests, `README` and `bomb` which is a program
+
+```sh
+cat README  
+Diffuse this bomb!
+When you have all the password use it as "thor" user with ssh.
+
+HINT:
+P
+ 2
+ b
+
+o
+4
+
+NO SPACE IN THE PASSWORD (password is case sensitive).
+```
+
+### Phase 1
+
+The program is just comparing our input against `Public speaking is very easy.`
+
+```sh
+./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+Public speaking is very easy.
+Phase 1 defused. How about the next one?
+```
+
+### Phase 2
+
+The program waits for the factorials of 1 to 6
+
+```sh
+1 2 6 24 120 720
+That's number 2.  Keep going!
+```
+
+### Phase 3
+
+The program awaits for an int, then a char and finally another number.
+Having a look through a debugger we see that 3 inputs will match the hint in `README` and not make the bomb explode
+
+```
+1 b 214
+2 b 755
+7 b 524
+```
+
+using the 1st one for demonstration:
+
+```sh
+1 b 214
+Halfway there!
+```
+
+### Phase 4
+
+The program will calculate the umpteenth number of the Fibonacci sequence and compare it to `0x37`, or in decimal `55`.
+
+```
+umpteenth:	0	1	2	3	4	5	6	7	8	9	10
+value:		0	1	1	2	3	5	8	13	21	34	55
+```
+
+The code is a little messed up, as it starts with (1, 1), and not (0, 1), so we need to use `9`
+
+```sh
+9
+So you got that one.  Try this one.
+```
+
+if we input `9 austinpowers` it will later unlock a secret phase.
+
+### Phase 5
+
+The program take as input a string:
+ * Then takes each character value
+ * Keeps the 4 less significative bits
+ * Use them as index with the string `isrveawhobpnutfg` to construct a new string
+ * Which it the compares with `giants`.
+
+| string | i   | s   | r   | v   | e   | a   | w   | h   | o   | b   | p   | n   | u   | t   | f   | g   |
+|--------|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
+|        | 0   | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   | 10  | 11  | 12  | 13  | 14  | 15  |
+|        | 0x0 | 0x1 | 0x2 | 0x3 | 0x4 | 0x5 | 0x6 | 0x7 | 0x8 | 0x9 | 0xa | 0xb | 0xc | 0xd | 0xe | 0xf |
+
+Multiple possibilities:
+
+
+| desired output                        | g   | i   | a   | n   | t   | s   |
+|---------------------------------------|-----|-----|-----|-----|-----|-----|
+| character index in `isrveawhobpnutfg` | 15  | 0   | 5   | 11  | 13  | 1   |
+|                                       | 0xf | 0x0 | 0x5 | 0xb | 0xd | 0x1 |
+| Candidates in minuscules              | o   | p   | e   | k   | m   | a   |
+|                                       |     |     | u   |     |     | q   |
+
+Using the 1st possibility for demonstration:
+
+```sh
+opekma
+Good work!  On to the next...
+```
+
+### Phase 6
+
+The program possess a linked list with value from 1 to 6, and will compare our input to them.
+
+It also makes sure all numbers are different and less or equal than 6.
+
+We made a little script to bruteforce it which can be used this way:
+
+```
+python3 phase_6.py ./bomb
+Input:  Public speaking is very easy.
+1 2 6 24 120 720
+1 b 214
+9
+opekma
+4 2 6 3 1 5
+
+Ouptut:  b"Welcome this is my little bomb !!!! You have 6 stages with\nonly one life good luck !! Have a nice day!\nPhase 1 defused. How about the next one?\nThat's number 2.  Keep going!\nHalfway there!\nSo you got that one.  Try this one.\nGood work!  On to the next...\nCongratulations! You've defused the bomb!\n"
+Here is the password:  Publicspeakingisveryeasy.126241207201b2149opekma426315
+```
+
+```sh
+4 2 6 3 1 5
+Congratulations! You've defused the bomb!
+```
+
+### Secret phase
+
+It's optional, and of no use.
+The answer needs to be above 1000, and some other constrain, but after luckily trying `1001` as our first try we found it!
+
+```sh
+./bomb
+Welcome this is my little bomb !!!! You have 6 stages with
+only one life good luck !! Have a nice day!
+Public speaking is very easy.
+Phase 1 defused. How about the next one?
+1 2 6 24 120 720
+That's number 2.  Keep going!
+1 b 214
+Halfway there!
+9 austinpowers
+So you got that one.  Try this one.
+opekma
+Good work!  On to the next...
+4 2 6 3 1 5
+Curses, you've found the secret phase!
+But finding it and solving it are quite different...
+1001
+Wow! You've defused the secret stage!
+Congratulations! You've defused the bomb!
+```
+
+
+### Finding thor ssh password
+
+Here are all the different valid possibilites:
+
+```
+Publicspeakingisveryeasy.12624120720*****9op*km*426315
+
+Publicspeakingisveryeasy.126241207201b2149opekma426315
+Publicspeakingisveryeasy.126241207202b7559opekma426315
+Publicspeakingisveryeasy.126241207207b5249opekma426315
+
+Publicspeakingisveryeasy.126241207201b2149opukma426315
+Publicspeakingisveryeasy.126241207202b7559opukma426315
+Publicspeakingisveryeasy.126241207207b5249opukma426315
+
+Publicspeakingisveryeasy.126241207201b2149opekmq426315
+Publicspeakingisveryeasy.126241207202b7559opekmq426315
+Publicspeakingisveryeasy.126241207207b5249opekmq426315
+
+Publicspeakingisveryeasy.126241207201b2149opukmq426315
+Publicspeakingisveryeasy.126241207202b7559opukmq426315
+Publicspeakingisveryeasy.126241207207b5249opukmq426315
+```
+
+None of them works.
+
+Going through slack/stackoverflow we found out that the password is messed up and you need invert characters n-1 and n-2.
+
+Link to the relevant post on stackoverflow :
+[https://stackoverflow.com/c/42network/questions/664](https://stackoverflow.com/c/42network/questions/664)
+
+Finally the working password is : `Publicspeakingisveryeasy.126241207201b2149opekmq426135`
+
+## SSH thor
