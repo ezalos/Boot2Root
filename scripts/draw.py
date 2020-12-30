@@ -1,12 +1,17 @@
 import turtle
 import re
+import sys
+
 colors = ['blue', 'red', 'green', 'magenta']
 NB_COLORS = len(colors)
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("usage: " + sys.argv[0] + " ./path/to/turtle")
+        sys.exit(1)
 	s = turtle.getscreen()
 	t = turtle.Turtle()
 	color_index = -1
-	with open('turtle') as f:
+	with open(sys.argv[1]) as f:
 		for line in f.readlines():
 			match = re.search('Avance ([0-9]+) spaces', line)
 			if (match):

