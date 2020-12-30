@@ -694,3 +694,14 @@ root
 uid=1005(zaz) gid=1005(zaz) euid=0(root) groups=0(root),1005(zaz)
 #
 ```
+
+let's add ourselves in `/etc/sudoers`
+
+```sh
+# vim /etc/sudoers
+# sudo su
+[sudo] password for zaz:
+root@BornToSecHackMe:/home/zaz# id
+uid=0(root) gid=0(root) groups=0(root)
+root@BornToSecHackMe:/home/zaz#
+```
