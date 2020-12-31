@@ -26,6 +26,7 @@
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
 
+# First Exploit
 
 ## IP and Ports
 [Table of Contents](#table-of-contents)
@@ -705,3 +706,18 @@ root
 root@BornToSecHackMe:/home/zaz# id
 uid=0(root) gid=0(root) groups=0(root)
 ```
+
+we also can change root password:
+
+```sh
+# sudo passwd root
+[sudo] password for zaz:
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+# su root
+Password:
+root@BornToSecHackMe:/home/zaz#
+```
+
+# Second Exploit
