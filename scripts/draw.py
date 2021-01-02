@@ -5,9 +5,9 @@ import sys
 colors = ['blue', 'red', 'green', 'magenta']
 NB_COLORS = len(colors)
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("usage: " + sys.argv[0] + " ./path/to/turtle")
-        sys.exit(1)
+	if len(sys.argv) < 2:
+		print("usage: " + sys.argv[0] + " ./path/to/turtle")
+		sys.exit(1)
 	s = turtle.getscreen()
 	t = turtle.Turtle()
 	color_index = -1
