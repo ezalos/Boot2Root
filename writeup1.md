@@ -182,7 +182,7 @@ user: lmezard
 pass: !q\]Ej?*5K5cy*AJ
 ```
 
-and we can now obtain this user email address :
+and we can now obtain this user email address, by clicking on `lmezard`, his profile settings :
 
 ```
 laurie@borntosec.net
@@ -335,6 +335,20 @@ local: README remote: README
 226 Transfer complete.
 96 bytes received in 0.00 secs (261.1421 kB/s)
 ftp> 221 Goodbye.
+```
+
+Alternative for mac:
+
+```sh
+➜  ~ lftp lmezard@192.168.1.42
+Mot de passe :
+lftp lmezard@192.168.1.42:~> ls
+-rwxr-x---    1 1001     1001           96 Oct 15  2015 README
+-rwxr-x---    1 1001     1001       808960 Oct 08  2015 fun
+lftp lmezard@192.168.1.42:/> get fun
+808960 octets transférés
+lftp lmezard@192.168.1.42:/> get README
+96 octets transférés
 ```
 
 let's have a look at the README:
@@ -707,7 +721,7 @@ root@BornToSecHackMe:/home/zaz# id
 uid=0(root) gid=0(root) groups=0(root)
 ```
 
-we also can change root password:
+we can alternatively change root password instead of doing `sudo su`:
 
 ```sh
 # sudo passwd root
@@ -719,5 +733,3 @@ passwd: password updated successfully
 Password:
 root@BornToSecHackMe:/home/zaz#
 ```
-
-# Second Exploit
