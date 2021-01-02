@@ -2,6 +2,17 @@
 
 https://linuxize.com/post/how-to-mount-iso-file-on-linux/
 
+## If you want to run this bonus with Docker
+
+* ```docker run -ti --privileged ubuntu```
+* ```apt update && apt upgrade -y```
+* ```apt install wget -y```
+* ```apt install squashfs-tools -y```
+* ```apt install sudo -y```
+* ```mkdir /root/Downloads```
+* ```cd /root/Downloads/```
+* ```wget https://projects.intra.42.fr/uploads/document/document/2527/BornToSecHackMe-v1.1.iso```
+
 1. Mounting ISO
 
 ```sh
